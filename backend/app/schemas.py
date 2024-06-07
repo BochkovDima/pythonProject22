@@ -4,17 +4,20 @@ from typing import List, Optional
 class TaskBase(BaseModel):
     title: str
     description: str
-    completed: bool = False
 
 class TaskCreate(TaskBase):
     pass
 
+class TaskUpdate(BaseModel):
+    completed: bool
+
 class Task(TaskBase):
     id: int
+    completed: bool
     owner_id: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Используем from_attributes вместо orm_mode
 
 class UserBase(BaseModel):
     username: str
@@ -27,4 +30,4 @@ class User(UserBase):
     tasks: List[Task] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Используем from_attributes вместо orm_mode
