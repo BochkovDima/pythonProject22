@@ -17,7 +17,7 @@ class Task(TaskBase):
     owner_id: Optional[int] = None
 
     class Config:
-        from_attributes = True  # Используем from_attributes вместо orm_mode
+        from_attributes = True
 
 class UserBase(BaseModel):
     username: str
@@ -30,4 +30,4 @@ class User(UserBase):
     tasks: List[Task] = []
 
     class Config:
-        from_attributes = True  # Используем from_attributes вместо orm_mode
+        from_attributes = True

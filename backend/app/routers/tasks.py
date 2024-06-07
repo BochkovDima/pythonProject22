@@ -36,9 +36,3 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.delete(db_task)
     db.commit()
     return db_task
-
-@router.get("/", response_model=list[schemas.Task])
-def read_tasks(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    tasks = crud.get_tasks(db, skip=skip, limit=limit)
-    print(f"Retrieved tasks: {tasks}")  # Добавьте это для логирования
-    return tasks
