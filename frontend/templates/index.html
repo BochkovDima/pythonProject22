@@ -14,6 +14,120 @@
         <button type="submit">Add Task</button>
     </form>
     <div id="task-list"></div>
-    <script src="/static/js/app.js"></script>
+    <div id="pagination"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const taskForm = document.getElementById('task-form');
+            const taskList = document.getElementById('task-list');
+            const pagination = document.getElementById('pagination');
+            const tasksPerPage = 10;
+            let currentPage = 1;
+            let totalTasks = 0;
+
+            function createTaskElement(task) {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.completed;
+                checkbox.addEventListener('change', function() {
+                    fetch(`/tasks/${task.id}?completed=${this.checked}`, {
+                        method: 'PUT'
+                    }).then(response => {
+                        if (response.ok) {
+                            taskDiv.classList.toggle('completed', this.checked);
+                        }
+                    });
+                });
+
+                const taskTitle = document.createElement('span');
+                taskTitle.textContent = task.title;
+
+                const taskDesc = document.createElement('span');
+                taskDesc.textContent = task.description;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function() {
+                    fetch(`/tasks/${task.id}`, {
+                        method: 'DELETE'
+                    }).then(response => {
+                        if (response.ok) {
+                            taskList.removeChild(taskDiv);
+                            loadTasks();
+                        }
+                    });
+                });
+
+                taskDiv.appendChild(checkbox);
+                taskDiv.appendChild(taskTitle);
+                taskDiv.appendChild(taskDesc);
+                taskDiv.appendChild(deleteButton);
+
+                return taskDiv;
+            }
+
+            function loadTasks() {
+                fetch(`/tasks?skip=${(currentPage - 1) * tasksPerPage}&limit=${tasksPerPage}`)
+                    .then(response => {
+                        totalTasks = parseInt(response.headers.get('X-Total-Count'), 10);
+                        console.log(`Total tasks from header: ${totalTasks}`);  // Логирование для проверки
+                        return response.json();
+                    })
+                    .then(data => {
+                        taskList.innerHTML = '';
+                        data.forEach(task => {
+                            const taskElement = createTaskElement(task);
+                            taskList.appendChild(taskElement);
+                        });
+                        renderPagination();
+                    });
+            }
+
+            function renderPagination() {
+                console.log(`Rendering pagination with totalTasks: ${totalTasks}`);  // Логирование для проверки
+                pagination.innerHTML = '';
+                const totalPages = Math.ceil(totalTasks / tasksPerPage);
+                console.log(`Total pages: ${totalPages}`);  // Логирование для проверки
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = document.createElement('button');
+                    pageButton.textContent = i;
+                    pageButton.disabled = (i === currentPage);
+                    pageButton.addEventListener('click', function() {
+                        currentPage = i;
+                        loadTasks();
+                    });
+                    pagination.appendChild(pageButton);
+                }
+            }
+
+            taskForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const title = document.getElementById('task-title').value;
+                const description = document.getElementById('task-desc').value;
+                const taskData = { title, description };
+                console.log('Submitting task:', taskData);  // Логирование отправляемых данных
+                fetch('/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(taskData)
+                }).then(response => response.json())
+                  .then(task => {
+                      console.log('Task created:', task);  // Логирование ответа от сервера
+                      const taskElement = createTaskElement(task);
+                      taskList.appendChild(taskElement);
+                      loadTasks();
+                      taskForm.reset();
+                  });
+            });
+
+            loadTasks();
+        });
+    </script>
 </body>
 </html>

@@ -4,16 +4,13 @@ from typing import List, Optional
 class TaskBase(BaseModel):
     title: str
     description: str
+    completed: bool = False
 
 class TaskCreate(TaskBase):
     pass
 
-class TaskUpdate(BaseModel):
-    completed: bool
-
 class Task(TaskBase):
     id: int
-    completed: bool
     owner_id: Optional[int] = None
 
     class Config:
