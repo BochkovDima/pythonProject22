@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .completed {
+            text-decoration: line-through;
+        }
+    </style>
 </head>
 <body>
     <h1>To-Do List</h1>
@@ -81,6 +86,11 @@
                 row.appendChild(descCell);
                 row.appendChild(actionsCell);
 
+                // Добавляем класс 'completed' для выполненных задач
+                if (task.completed) {
+                    row.classList.add('completed');
+                }
+
                 return row;
             }
 
@@ -88,7 +98,6 @@
                 fetch(`/tasks?skip=${(currentPage - 1) * tasksPerPage}&limit=${tasksPerPage}`)
                     .then(response => {
                         totalTasks = parseInt(response.headers.get('X-Total-Count'), 10);
-                        console.log(`Total tasks from header: ${totalTasks}`);  // Логирование для проверки
                         return response.json();
                     })
                     .then(data => {
@@ -102,10 +111,8 @@
             }
 
             function renderPagination() {
-                console.log(`Rendering pagination with totalTasks: ${totalTasks}`);  // Логирование для проверки
                 pagination.innerHTML = '';
                 const totalPages = Math.ceil(totalTasks / tasksPerPage);
-                console.log(`Total pages: ${totalPages}`);  // Логирование для проверки
 
                 for (let i = 1; i <= totalPages; i++) {
                     const pageButton = document.createElement('button');
@@ -124,7 +131,7 @@
                 const title = document.getElementById('task-title').value;
                 const description = document.getElementById('task-desc').value;
                 const taskData = { title, description };
-                console.log('Submitting task:', taskData);  // Логирование отправляемых данных
+
                 fetch('/tasks', {
                     method: 'POST',
                     headers: {
@@ -133,7 +140,6 @@
                     body: JSON.stringify(taskData)
                 }).then(response => response.json())
                   .then(task => {
-                      console.log('Task created:', task);  // Логирование ответа от сервера
                       const taskElement = createTaskElement(task);
                       taskList.appendChild(taskElement);
                       loadTasks();
@@ -144,5 +150,6 @@
             loadTasks();
         });
     </script>
+    <script src="/static/js/app.js"></script>  <!-- Подключение app.js -->
 </body>
 </html>

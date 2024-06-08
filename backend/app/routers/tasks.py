@@ -18,9 +18,8 @@ def read_tasks(response: Response, db: Session = Depends(get_db), skip: int = 0,
     tasks = crud.get_tasks(db, skip=skip, limit=limit)
     total_tasks = db.query(models.Task).count()
     response.headers["X-Total-Count"] = str(total_tasks)
-    print(f"Total tasks: {total_tasks}")  # Добавьте эту строку для логирования
+    print(f"Total tasks: {total_tasks}")
     return tasks
-
 
 @router.put("/{task_id}", response_model=schemas.Task)
 def update_task(task_id: int, completed: bool, db: Session = Depends(get_db)):

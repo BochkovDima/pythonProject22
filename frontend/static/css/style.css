@@ -1,44 +1,75 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1 {
     text-align: center;
+    margin-top: 20px;
+    font-size: 2em;
+    color: #333;
 }
 
 form {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    gap: 10px;
 }
 
 #task-title, #task-desc {
-    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #5cb85c;
+    color: white;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4cae4c;
 }
 
 #task-table {
     width: 80%;
-    margin: 0 auto;
     border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #task-table th, #task-table td {
     border: 1px solid #ccc;
     padding: 10px;
-    text-align: left;
+    text-align: center;
+    vertical-align: middle;
 }
 
 #task-table th {
-    background-color: #f4f4f4;
+    background-color: #f4f4f9;
+    color: #333;
 }
 
-.task input[type="checkbox"] {
-    margin-right: 10px;
+#task-table tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-.task button {
-    margin-left: 10px;
-    flex-shrink: 0;
+#task-table tr:hover {
+    background-color: #f1f1f1;
 }
 
 #pagination {
@@ -49,4 +80,46 @@ form {
 
 #pagination button {
     margin: 0 5px;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+#pagination button:hover {
+    background-color: #f1f1f1;
+}
+
+#pagination button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+/* Увеличение размера и изменение цвета чекбокса */
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: white;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked::before {
+    background-color: #ff4c4c;
+    border-color: #ff0000;
+}
+
+/* Перечеркивание текста при отметке чекбокса */
+.completed {
+    text-decoration: line-through;
+    color: #999;
 }
