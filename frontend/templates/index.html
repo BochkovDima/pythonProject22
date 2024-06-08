@@ -13,7 +13,19 @@
         <input type="text" id="task-desc" placeholder="Task Description" required>
         <button type="submit">Add Task</button>
     </form>
-    <div id="task-list"></div>
+    <table id="task-table">
+        <thead>
+            <tr>
+                <th>Complete</th>
+                <th>Task</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="task-list">
+            <!-- Tasks will be added here dynamically -->
+        </tbody>
+    </table>
     <div id="pagination"></div>
 
     <script>
@@ -26,9 +38,9 @@
             let totalTasks = 0;
 
             function createTaskElement(task) {
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task';
+                const row = document.createElement('tr');
 
+                const checkboxCell = document.createElement('td');
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.checked = task.completed;
@@ -37,17 +49,19 @@
                         method: 'PUT'
                     }).then(response => {
                         if (response.ok) {
-                            taskDiv.classList.toggle('completed', this.checked);
+                            row.classList.toggle('completed', this.checked);
                         }
                     });
                 });
+                checkboxCell.appendChild(checkbox);
 
-                const taskTitle = document.createElement('span');
-                taskTitle.textContent = task.title;
+                const titleCell = document.createElement('td');
+                titleCell.textContent = task.title;
 
-                const taskDesc = document.createElement('span');
-                taskDesc.textContent = task.description;
+                const descCell = document.createElement('td');
+                descCell.textContent = task.description;
 
+                const actionsCell = document.createElement('td');
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Delete';
                 deleteButton.addEventListener('click', function() {
@@ -55,18 +69,19 @@
                         method: 'DELETE'
                     }).then(response => {
                         if (response.ok) {
-                            taskList.removeChild(taskDiv);
+                            taskList.removeChild(row);
                             loadTasks();
                         }
                     });
                 });
+                actionsCell.appendChild(deleteButton);
 
-                taskDiv.appendChild(checkbox);
-                taskDiv.appendChild(taskTitle);
-                taskDiv.appendChild(taskDesc);
-                taskDiv.appendChild(deleteButton);
+                row.appendChild(checkboxCell);
+                row.appendChild(titleCell);
+                row.appendChild(descCell);
+                row.appendChild(actionsCell);
 
-                return taskDiv;
+                return row;
             }
 
             function loadTasks() {
